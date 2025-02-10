@@ -2,7 +2,7 @@
 
 # Shortcut for defining variables (optional)
 
-#wgitld="/home/${USER}"
+#shortcut="/home/${USER}"
 
 # Which directories to run git pull (wgit -p) in:
 gitdirectories=""
