@@ -1,0 +1,77 @@
+#!/bin/bash
+
+# sourcing the config file
+
+if [[ ! -z $XDG_CONFIG_HOME ]]; then
+    confdir=$XDG_CONFIG_HOME
+else
+    confdir=${HOME}/.config
+fi
+
+source ${confdir}/wgit/config.sh
+
+# checking if wgitlogo is true or not and running it:
+
+if [[ "$wgitlogo" = true ]]; then
+    cat $wgitlogod
+fi
+
+# error function
+
+function bruhmoment() {
+    echo $1
+    exit $2
+}
+
+# get flags ready for parsing
+args=$(getopt -o pc: --long pull,clone: -- "$@")
+if [[ $? -ne 0 ]]; then # getopt failed, exit instantly
+    bruhmoment "getopt failure." 1
+fi
+
+# parse flags
+eval set -- "$args"
+while [ : ]; do # [ : ] makes it parse forever until the statement gets broken
+    case "$1" in
+    # git pull in every directory defined under $gitdirectories:
+    -p | --pull)
+        echo "Starting git pull..."
+        for dir in $gitdirectories; do
+            git -C "$dir" pull
+        done
+        exit
+        # we need to shift after every statement (unless exiting) so it knows to move on to the next argument instead of just parsing the same one over and over again
+        # shift
+        ;;
+    # links:
+    -c | --clone)
+        repolink="$2" # for a flag with its own argument, the argument passed to the flag becomes $2
+        echo "Git cloning..."
+        git clone $repolink
+        echo "Done!"
+        exit
+        # for a flag with its own argument, we need to shift two instead of one, to account for the arguments provided by the suer
+        # shift 2
+        ;;
+
+    # if all flags are parsed, break and continue
+    --)
+        shift
+        break
+        ;;
+    esac
+done
+
+# the part that git clones
+read -p "Want to use a link? [y/N]: " repoans
+if [[ $repoans =~ ^([yY][eE][sS]|[yY])$ ]]; then
+    read -p "Repo link: " repolink
+    echo "Git cloning..."
+    git clone $repolink
+    echo "Done!"
+else
+    read -p "Github user and repo (user/repo): " githubrepo
+    echo "Git cloning..."
+    git clone https://github.com/${githubrepo}.git
+    echo "Done!"
+fi
