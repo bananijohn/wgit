@@ -1,24 +1,22 @@
 #!/bin/bash
 
-# sourcing the config file
-
+# if XDG_CONFIG_HOME is not defined, assume ~/.config is where config files are
 if [[ ! -z $XDG_CONFIG_HOME ]]; then
     confdir=$XDG_CONFIG_HOME
 else
     confdir=${HOME}/.config
 fi
 
+# load user config
 source ${confdir}/wgit/config.sh
 
-# checking if wgitlogo is true or not and running it:
-
+# show logo if needed
 if [[ "$wgitlogo" = true ]]; then
     cat $wgitlogod
 fi
 
-# error function
-
-function bruhmoment() {
+# error logging
+function error() {
     echo $1
     exit $2
 }
@@ -26,14 +24,14 @@ function bruhmoment() {
 # get flags ready for parsing
 args=$(getopt -o pl: --long pull,link: -- "$@")
 if [[ $? -ne 0 ]]; then # getopt failed, exit instantly
-    bruhmoment "getopt failure." 1
+    error "getopt failure." 1
 fi
 
 # parse flags
 eval set -- "$args"
 while [ : ]; do # [ : ] makes it parse forever until the statement gets broken
     case "$1" in
-    # git pull in every directory defined under $gitdirectories:
+    # git pull in every directory defined under $gitdirectories
     -p | --pull)
         echo "Starting git pull..."
         for dir in $gitdirectories; do
@@ -43,7 +41,7 @@ while [ : ]; do # [ : ] makes it parse forever until the statement gets broken
         # we need to shift after every statement (unless exiting) so it knows to move on to the next argument instead of just parsing the same one over and over again
         # shift
         ;;
-    # links:
+    # links
     -l | --link)
         repolink="$2" # for a flag with its own argument, the argument passed to the flag becomes $2
         echo "Git cloning..."
@@ -62,7 +60,7 @@ while [ : ]; do # [ : ] makes it parse forever until the statement gets broken
     esac
 done
 
-# the part that git clones
+# clone from a user specified link or github repo (username/reponame format)
 read -p "Want to use a link? [y/N]: " repoans
 if [[ $repoans =~ ^([yY][eE][sS]|[yY])$ ]]; then
     read -p "Repo link: " repolink

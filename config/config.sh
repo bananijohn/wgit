@@ -1,17 +1,11 @@
-# Variables are defined here
+# Variables wgit uses are defined here.
+# You can define additional ones if needed.
 
-# Shortcut for defining variables (optional)
-
-#shortcut="/home/${USER}"
-
-# Which directories to run git pull (wgit -p) in:
+# Which directories to run git pull (wgit -p) in
 gitdirectories=""
 
-# True to display the logo, false to not:
-
+# True to display the logo, false to not
 wgitlogo=true
 
-# Logo directory:
-
-# Use confdir for ~/.config
+# Logo directory (Use confdir for ~/.config)
 wgitlogod="${confdir}/wgit/logo.txt"
