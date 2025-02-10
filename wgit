@@ -24,7 +24,7 @@ function bruhmoment() {
 }
 
 # get flags ready for parsing
-args=$(getopt -o pc: --long pull,clone: -- "$@")
+args=$(getopt -o pl: --long pull,link: -- "$@")
 if [[ $? -ne 0 ]]; then # getopt failed, exit instantly
     bruhmoment "getopt failure." 1
 fi
@@ -44,7 +44,7 @@ while [ : ]; do # [ : ] makes it parse forever until the statement gets broken
         # shift
         ;;
     # links:
-    -c | --clone)
+    -l | --link)
         repolink="$2" # for a flag with its own argument, the argument passed to the flag becomes $2
         echo "Git cloning..."
         git clone $repolink
